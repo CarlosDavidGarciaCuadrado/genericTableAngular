@@ -1,0 +1,21 @@
+table {
+    width: 100%;
+    background-color: rgb(77, 85, 92);
+  }
+  
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+
+mat-paginator {
+  background-color: rgb(88, 88, 89);
+}
+
+.filterTable {
+  background-color: rgb(88, 88, 89);
+}
+
+a {
+  margin-inline: 1%;
+}
