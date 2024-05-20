@@ -12,7 +12,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 @Component({
   selector: 'app-generic-table',
   standalone: true,
-  imports: [ 
+  imports: [
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
@@ -39,19 +39,17 @@ export class GenericTableComponent {
   dataSource!: MatTableDataSource<any>;
   eventControl!: TableEventControl;
 
-  ngOnInit(): void 
-  {
-    this.dataSource = new MatTableDataSource(this.dataSourceExternal);
+  ngOnInit(): void {
+    const indexedDataSource = this.dataSourceExternal.map((item: any, index: any) => ({ ...item, index }));
+    this.dataSource = new MatTableDataSource(indexedDataSource);
   }
 
-  ngAfterViewInit() 
-  {
+  ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(event: Event) 
-  {
+  applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
 
@@ -60,14 +58,28 @@ export class GenericTableComponent {
     }
   }
 
-  executeAction(action: string, event: any, object?: any) 
-  {
+  executeAction(action: string, event: any, object?: any) {
     this.eventControl = {
       action: action,
       event: event,
       object: object ?? {}
     };
     this.actionEvent.emit(JSON.stringify(this.eventControl));
+  }
+
+  interlineDefault(index: number) {
+    return { 'background-color': index === 0 ? 'white' : 'lightgrey' };
+  }
+
+  interlineColor(index: number) {
+    let color = index === 0 ? this.tableConfig?.colorInterline?.color0 : this.tableConfig?.colorInterline?.color1;
+    return this.validateInterLineColor() ? this.interlineDefault(index) : { 'background-color': color };
+  }
+
+  validateInterLineColor() {
+    let color0 = this.tableConfig?.colorInterline?.color0;
+    let color1 = this.tableConfig?.colorInterline?.color1;
+    return (!color0 || color0 === '') || (!color1 || color1 === '')
   }
 
 }
