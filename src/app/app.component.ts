@@ -43,10 +43,19 @@ export class AppComponent {
     canShowDetail: true,
     orderColumn: this.orderColumn,
     actionColumnWidth: 10,
-    applyInterline: false,
+    applyInterline: true,
     colorInterline: {
-      color0: 'red',
+      color0: '#FF5733',
       color1: 'green'
+    },
+    sortColumns: ['id', 'nombre'],
+    paginatorConfig: {
+      showPaginator: true,
+      showFirstLastButtons: true,
+      showPageSizeOptions: true,
+      pageSizeOptions: [5, 15, 25],
+      pageSizeDefault: 5,
+      disable: false
     }
   }
 

@@ -8,8 +8,10 @@
     <ng-container [matColumnDef]="tableData" *ngFor="let tableData of objectKeys(columnHeader)">
       <ng-container [ngSwitch]="tableData">
         <ng-container *ngSwitchDefault>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            <mat-label>{{ columnHeader[tableData] }}</mat-label>
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-label *ngIf="isSortColumn(columnHeader[tableData])" mat-sort-header>{{ columnHeader[tableData]
+              }}</mat-label>
+            <mat-label *ngIf="!isSortColumn(columnHeader[tableData])">{{ columnHeader[tableData] }}</mat-label>
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element[tableData] }}
@@ -35,9 +37,15 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="objectKeys(columnHeader)"></tr>
-    <tr mat-row *matRowDef="let row; columns: objectKeys(columnHeader);"
-      [style]="tableConfig.applyInterline ? interlineColor(row.index % 2) : ''"></tr>
+    <tr mat-row *matRowDef="let row; let i = index; columns: objectKeys(columnHeader);"
+      [style]="tableConfig.applyInterline ? interlineColor(i % 2) : ''"></tr>
   </table>
-
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+  <div *ngIf="tableConfig.paginatorConfig.showPaginator">
+    <mat-paginator 
+    [pageSizeOptions]="tableConfig.paginatorConfig.showPageSizeOptions ? tableConfig.paginatorConfig?.pageSizeOptions : []" 
+    [disabled]="tableConfig.paginatorConfig.disable"
+    [showFirstLastButtons]="tableConfig.paginatorConfig.showFirstLastButtons"
+    [pageSize]="tableConfig.paginatorConfig.pageSizeDefault"
+    ></mat-paginator>
+  </div>
 </div>

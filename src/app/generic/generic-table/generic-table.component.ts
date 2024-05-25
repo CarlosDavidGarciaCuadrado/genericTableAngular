@@ -40,16 +40,16 @@ export class GenericTableComponent {
   eventControl!: TableEventControl;
 
   ngOnInit(): void {
-    const indexedDataSource = this.dataSourceExternal.map((item: any, index: any) => ({ ...item, index }));
-    this.dataSource = new MatTableDataSource(indexedDataSource);
+    this.dataSource = new MatTableDataSource(this.dataSourceExternal);
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.customMessagePaginator();
   }
 
-  applyFilter(event: Event) {
+  applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
 
@@ -58,7 +58,7 @@ export class GenericTableComponent {
     }
   }
 
-  executeAction(action: string, event: any, object?: any) {
+  executeAction(action: string, event: any, object?: any): void {
     this.eventControl = {
       action: action,
       event: event,
@@ -67,19 +67,42 @@ export class GenericTableComponent {
     this.actionEvent.emit(JSON.stringify(this.eventControl));
   }
 
-  interlineDefault(index: number) {
+  interlineDefault(index: number): object {
     return { 'background-color': index === 0 ? 'white' : 'lightgrey' };
   }
 
-  interlineColor(index: number) {
+  interlineColor(index: number): object {
     let color = index === 0 ? this.tableConfig?.colorInterline?.color0 : this.tableConfig?.colorInterline?.color1;
     return this.validateInterLineColor() ? this.interlineDefault(index) : { 'background-color': color };
   }
 
-  validateInterLineColor() {
+  validateInterLineColor(): boolean {
     let color0 = this.tableConfig?.colorInterline?.color0;
     let color1 = this.tableConfig?.colorInterline?.color1;
     return (!color0 || color0 === '') || (!color1 || color1 === '')
+  }
+
+  isSortColumn(nameColumn: string): boolean {
+    const columnsSort = this.tableConfig?.sortColumns ? this.tableConfig.sortColumns : [];
+    return columnsSort.includes(nameColumn);
+  }
+
+  customMessagePaginator(): void {
+    if(this.tableConfig.paginatorConfig.showPaginator){
+      this.dataSource.paginator = this.paginator;
+      this.paginator._intl.itemsPerPageLabel = 'Registros por página';
+      this.paginator._intl.previousPageLabel = 'Anterior';
+      this.paginator._intl.nextPageLabel = 'Siguiente';
+      this.paginator._intl.lastPageLabel = 'Última';
+      this.paginator._intl.firstPageLabel = 'Primera';
+      this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+        const start = page * pageSize + 1;
+        const end = (page + 1) * pageSize;
+        let localEnd = (this.dataSourceExternal.length) > 0 ? this.dataSourceExternal.length : length;
+        localEnd = localEnd > end ? end : localEnd;
+        return `${start} - ${localEnd} de ${length}`;
+      };
+    }
   }
 
 }

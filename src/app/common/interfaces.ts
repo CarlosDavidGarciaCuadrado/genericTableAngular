@@ -16,6 +16,17 @@ export interface GenericTableConfig {
   actionColumnWidth?: number;
   applyInterline?: boolean;
   colorInterline?: ColorInterline;
+  sortColumns?: string[];
+  paginatorConfig: PaginatorConfig;
+}
+
+interface PaginatorConfig {
+  showPaginator: boolean;
+  showFirstLastButtons: boolean;
+  showPageSizeOptions: boolean;
+  pageSizeOptions?: number[];
+  pageSizeDefault: number;
+  disable: boolean;
 }
 
 interface ColorInterline {
