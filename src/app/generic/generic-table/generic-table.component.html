@@ -42,7 +42,7 @@
   </table>
   <div *ngIf="tableConfig.paginatorConfig.showPaginator">
     <mat-paginator 
-    [pageSizeOptions]="tableConfig.paginatorConfig.showPageSizeOptions ? tableConfig.paginatorConfig?.pageSizeOptions : []" 
+    [pageSizeOptions]="tableConfig.paginatorConfig.showPageSizeOptions ? tableConfig.paginatorConfig.pageSizeOptions : []" 
     [disabled]="tableConfig.paginatorConfig.disable"
     [showFirstLastButtons]="tableConfig.paginatorConfig.showFirstLastButtons"
     [pageSize]="tableConfig.paginatorConfig.pageSizeDefault"

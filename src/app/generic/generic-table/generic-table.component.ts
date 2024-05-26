@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { TableEventControl } from '../../common/interfaces';
+import { GenericTableConfig, TableEventControl } from '../../common/interfaces';
 import { FlexLayoutModule } from "@angular/flex-layout";
 
 @Component({
@@ -28,7 +28,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 export class GenericTableComponent {
   @Input() dataSourceExternal: any;
   @Input() columnHeader: any;
-  @Input() tableConfig: any;
+  @Input() tableConfigExternal: GenericTableConfig | undefined;
   @Input() service: any;
   @Input() searchWord: any;
   @Output() actionEvent = new EventEmitter<string>();
@@ -38,15 +38,52 @@ export class GenericTableComponent {
   objectKeys = Object.keys;
   dataSource!: MatTableDataSource<any>;
   eventControl!: TableEventControl;
+  tableConfig: GenericTableConfig;
+
+  constructor(){
+    this.tableConfig = this.genericTableConfigDefault();
+  }
 
   ngOnInit(): void {
     this.dataSource = new MatTableDataSource(this.dataSourceExternal);
+    if(this.tableConfigExternal)
+      this.tableConfig = this.tableConfigExternal;
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.customMessagePaginator();
+  }
+
+  genericTableConfigDefault (): GenericTableConfig {
+    return {
+    canCreate: false,
+    canEdit: false,
+    canRemove: false,
+    canShowDetail: false,
+    canUpdate: true,
+    canUpdateState: false,
+    orderColumn: {},
+    applyInterline: true,
+    paginatorConfig: {
+      showPaginator: true,
+      showFirstLastButtons: true,
+      showPageSizeOptions: true,
+      pageSizeOptions: [5,10,20],
+      pageSizeDefault: 5,
+      disable: false,
+      customMessagePaginator: {
+        registerByPage: 'Registros por página',
+        nextPage: 'Siguiente',
+        previousPage: 'Atrás',
+        lastPage: 'Última página',
+        firstPage: 'Primera página',
+        pageInfo: 'Total registros: ',
+        showPageInfo: true
+      }
+    }
+    }
   }
 
   applyFilter(event: Event): void {
@@ -90,17 +127,17 @@ export class GenericTableComponent {
   customMessagePaginator(): void {
     if(this.tableConfig.paginatorConfig.showPaginator){
       this.dataSource.paginator = this.paginator;
-      this.paginator._intl.itemsPerPageLabel = 'Registros por página';
-      this.paginator._intl.previousPageLabel = 'Anterior';
-      this.paginator._intl.nextPageLabel = 'Siguiente';
-      this.paginator._intl.lastPageLabel = 'Última';
-      this.paginator._intl.firstPageLabel = 'Primera';
+      this.paginator._intl.itemsPerPageLabel = this.tableConfig.paginatorConfig.customMessagePaginator?.registerByPage ?? 'item by page';
+      this.paginator._intl.previousPageLabel = this.tableConfig.paginatorConfig.customMessagePaginator?.previousPage ?? 'previous page';
+      this.paginator._intl.nextPageLabel = this.tableConfig.paginatorConfig.customMessagePaginator?.nextPage ??  'next page';
+      this.paginator._intl.lastPageLabel = this.tableConfig.paginatorConfig.customMessagePaginator?.lastPage ?? 'last page';
+      this.paginator._intl.firstPageLabel = this.tableConfig.paginatorConfig.customMessagePaginator?.firstPage ?? 'first page';
       this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
         const start = page * pageSize + 1;
         const end = (page + 1) * pageSize;
         let localEnd = (this.dataSourceExternal.length) > 0 ? this.dataSourceExternal.length : length;
         localEnd = localEnd > end ? end : localEnd;
-        return `${start} - ${localEnd} de ${length}`;
+        return  this.tableConfig.paginatorConfig.customMessagePaginator?.showPageInfo ? `${start} - ${localEnd} de ${length}` : `${this.tableConfig.paginatorConfig.customMessagePaginator?.pageInfo ?? 'Total registers: '} ${length}`;
       };
     }
   }

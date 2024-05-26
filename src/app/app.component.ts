@@ -55,7 +55,16 @@ export class AppComponent {
       showPageSizeOptions: true,
       pageSizeOptions: [5, 15, 25],
       pageSizeDefault: 5,
-      disable: false
+      disable: false,
+      customMessagePaginator: {
+        registerByPage: 'Registros por página',
+        nextPage: 'Página siguiente',
+        previousPage: 'Página anterior',
+        lastPage: 'Última página',
+        firstPage: 'Primera página',
+        pageInfo: 'Total registros: ',
+        showPageInfo: true
+      }
     }
   }
 

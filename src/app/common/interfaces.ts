@@ -24,9 +24,20 @@ interface PaginatorConfig {
   showPaginator: boolean;
   showFirstLastButtons: boolean;
   showPageSizeOptions: boolean;
-  pageSizeOptions?: number[];
+  pageSizeOptions: number[];
   pageSizeDefault: number;
   disable: boolean;
+  customMessagePaginator?: CustomMessagePaginator;
+}
+
+interface CustomMessagePaginator {
+  registerByPage: string;
+  nextPage: string;
+  previousPage: string;
+  lastPage: string;
+  firstPage: string;
+  pageInfo: string;
+  showPageInfo: boolean;
 }
 
 interface ColorInterline {
